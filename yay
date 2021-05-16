@@ -1,0 +1,69 @@
+sudo echo Password accepted
+if [ $# = 0 ]
+then
+if [ $(which brew) != 'brew not found' ]
+then
+echo '\033[1mStarting \033[4m\033[36mBrew\033[0m\033[1m upgrade\033[0m'
+brew upgrade
+brew update
+fi
+
+if [ $(which port) != 'port not found' ]
+then
+echo '\033[1mStarting \033[4m\033[36mMacPorts\033[0m\033[1m upgrade\033[0m'
+sudo port selfupdate
+sudo port upgrade
+fi
+
+if [ $(which pkgin) != 'pkgin not found' ]
+then
+sudo pkgin -y update
+sudo pkgin -y upgrade
+fi
+
+if [ $(which nix) != 'nix not found' ]
+then
+nix-channel --update nixpkgs
+nix-env -u '*'
+nix-collect-garbage -d
+fi
+
+echo '\033[1mStarting \033[4m\033[36mNative Software\033[0m\033[1m upgrade\033[0m'
+sudo softwareupdate -ia --verbose
+echo '\033[1mStarting \033[4m\033[36mMac AppStore\033[0m\033[1m upgrade\033[0m'
+mas upgrade
+echo Everything up to date
+
+elif [ '`echo $1`' = 'search' ]
+then
+if [ $(which brew) != 'brew not found' ]
+then
+brew search $2
+fi
+
+if [ $? != 0 ]
+then
+if [ $(which port) != 'port not found' ]
+then
+port search $2
+fi
+
+if [ $? != 0 ]
+then
+if [ $(which pkgin) != 'pkgin not found' ]
+then
+pkgin search $2
+fi
+
+if [ $? != 0 ]
+then
+if [ $(which nix) != 'nix not found' ]
+then
+nix search -u $2
+fi
+fi
+fi
+fi
+else
+echo $#
+fi
