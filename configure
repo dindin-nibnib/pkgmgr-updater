@@ -1,1 +1,2 @@
-cp ./macos-updater /usr/local/Cellar/macos-updater/1.0/macos-updater
+cp ./macos-updater /usr/local/Cellar/macos-updater/1.0/bin/macos-updater
+chmod a+x /usr/local/Cellar/macos-updater/1.0/bin/macos-updater
