@@ -1,1 +1,1 @@
-ln ./macos-updater /usr/local/bin
+cp ./macos-updater /usr/local/Cellar/macos-updater/1.0/macos-updater
