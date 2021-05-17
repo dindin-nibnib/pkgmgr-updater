@@ -1,3 +1,2 @@
 mkdir $1
 cp ./macos-updater $1/macos-updater
-chmod a+x $1/macos-updater
