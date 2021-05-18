@@ -1,2 +1,1 @@
-mkdir $1
-cp ./macos-updater $1/macos-updater
+chmod 755 $1/macos-updater
