@@ -1,69 +1,109 @@
+#! /bin/bash
+normal=$(tput sgr0)
+bold=$(tput bold)
+cyan=$(tput setaf 6)
+underlined=$(tput smul)
+blue=$(tput setaf 12)
+x=0
+fill_line='while [ $x -lt $(tput cols) ]; do echo -n "${blue}=${normal}"; let x=$x+1; done; x=0'
 sudo echo Password accepted
-if [ $# = 0 ]
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    Darwin*)    machine=Mac;;
+    CYGWIN*)    machine=Cygwin;;
+    MINGW*)     machine=MinGw;;
+    *)          machine="UNKNOWN:${unameOut}"
+esac
+
+if [[ -f /etc/os-release ]]
 then
-if [ $(which brew) != 'brew not found' ]
+    # freedesktop.org and systemd
+    . /etc/os-release
+    OS=$NAME
+    VER=$VERSION_ID
+elif type lsb_release >/dev/null 2>&1
 then
-echo '\033[1mStarting \033[4m\033[36mBrew\033[0m\033[1m upgrade\033[0m'
+    # linuxbase.org
+    OS=$(lsb_release -si)
+    VER=$(lsb_release -sr)
+elif [[ -f /etc/lsb-release ]]
+then
+    # For some versions of Debian/Ubuntu without lsb_release command
+    . /etc/lsb-release
+    OS=$DISTRIB_ID
+    VER=$DISTRIB_RELEASE
+elif [[ -f /etc/debian_version ]]
+then
+    # Older Debian/Ubuntu/etc.
+    OS=Debian
+    VER=$(cat /etc/debian_version)
+elif [[ -f /etc/SuSe-release ]]
+then
+    # Older SuSE/etc.
+    ...
+elif [[ -f /etc/redhat-release ]]
+then
+    # Older Red Hat, CentOS, etc.
+    ...
+else
+    # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
+    OS=$(uname -s)
+    VER=$(uname -r)
+fi
+
+if [[ $# = 0 ]]
+then
+if command -v brew &> /dev/null
+then
+while [ $x -lt $(tput cols) ]; do echo -n "${blue}=${normal}"; let x=$x+1; done; x=0
+echo ${bold}Starting ${underlined}${cyan}Brew${normal}${bold} upgrade${normal}
 brew upgrade
 brew update
 fi
 
-if [ $(which port) != 'port not found' ]
+if command -v port &> /dev/null
 then
-echo '\033[1mStarting \033[4m\033[36mMacPorts\033[0m\033[1m upgrade\033[0m'
+while [ $x -lt $(tput cols) ]; do echo -n "${blue}=${normal}"; let x=$x+1; done; x=0
+echo ${bold}Starting ${underlined}${cyan}MacPorts${normal}${bold} upgrade${normal}
 sudo port selfupdate
 sudo port upgrade
 fi
 
-if [ $(which pkgin) != 'pkgin not found' ]
+if command -v pkgin &> /dev/null
 then
+while [ $x -lt $(tput cols) ]; do echo -n "${blue}=${normal}"; let x=$x+1; done; x=0
+echo ${bold}Starting ${underlined}${cyan}Pkgsrc${normal}${bold} upgrade${normal}
 sudo pkgin -y update
 sudo pkgin -y upgrade
 fi
 
-if [ $(which nix) != 'nix not found' ]
+if command -v nix &> /dev/null
 then
+while [ $x -lt $(tput cols) ]; do echo -n "${blue}=${normal}"; let x=$x+1; done; x=0
+echo ${bold}Starting ${underlined}${cyan}Nix${normal}${bold} upgrade${normal}
 nix-channel --update nixpkgs
 nix-env -u '*'
 nix-collect-garbage -d
 fi
 
-echo '\033[1mStarting \033[4m\033[36mNative Software\033[0m\033[1m upgrade\033[0m'
+if [[ ${machine} = 'Mac' ]]
+then
+while [ $x -lt $(tput cols) ]; do echo -n "${blue}=${normal}"; let x=$x+1; done; x=0
+echo ${bold}Starting ${underlined}${cyan}Native Software${normal}${bold} upgrade${normal}
 sudo softwareupdate -ia --verbose
-echo '\033[1mStarting \033[4m\033[36mMac AppStore\033[0m\033[1m upgrade\033[0m'
+while [ $x -lt $(tput cols) ]; do echo -n "${blue}=${normal}"; let x=$x+1; done; x=0
+echo ${bold}Starting ${underlined}${cyan}Mac AppStore${normal}${bold} upgrade${normal}
 mas upgrade
+elif [[ ${machine} = 'Linux' ]]
+then
+if [[ ${OS} = 'Manjaro Linux' ]]
+then
+while [ $x -lt $(tput cols) ]; do echo -n "${blue}=${normal}"; let x=$x+1; done; x=0
+echo ${bold}Starting ${underlined}${cyan}Pacman${normal}${bold} upgrade${normal}
+sudo pacman -Syu
+fi
+fi
+
 echo Everything up to date
-
-elif [ '`echo $1`' = 'search' ]
-then
-if [ $(which brew) != 'brew not found' ]
-then
-brew search $2
-fi
-
-if [ $? != 0 ]
-then
-if [ $(which port) != 'port not found' ]
-then
-port search $2
-fi
-
-if [ $? != 0 ]
-then
-if [ $(which pkgin) != 'pkgin not found' ]
-then
-pkgin search $2
-fi
-
-if [ $? != 0 ]
-then
-if [ $(which nix) != 'nix not found' ]
-then
-nix search -u $2
-fi
-fi
-fi
-fi
-else
-echo $#
 fi
