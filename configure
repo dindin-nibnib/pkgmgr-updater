@@ -1,1 +1,1 @@
-chmod 755 $1/macos-updater
+chmod 755 $1/pkgmgr-updater
