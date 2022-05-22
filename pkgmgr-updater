@@ -89,7 +89,7 @@ fi
 if [[ ${machine} = 'Mac' ]]
 then
 while [ $x -lt $(tput cols) ]; do echo -n "${blue}=${normal}"; let x=$x+1; done; x=0
-echo ${bold}Starting ${underlined}${cyan}Native Software${normal}${bold} upgrade${normal}
+echo ${bold}Starting ${underlined}${cyan}System${normal}${bold} upgrade${normal}
 sudo softwareupdate -ia --verbose
 while [ $x -lt $(tput cols) ]; do echo -n "${blue}=${normal}"; let x=$x+1; done; x=0
 echo ${bold}Starting ${underlined}${cyan}Mac AppStore${normal}${bold} upgrade${normal}
